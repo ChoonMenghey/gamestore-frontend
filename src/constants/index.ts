@@ -1,6 +1,6 @@
 export const GENRES = [
-    "Action",
-    "Adventure",
+    "Action-Adventure",
+    "Sandbox",
     "Strategy",
     "RPG",
 ];

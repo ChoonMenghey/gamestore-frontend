@@ -89,7 +89,7 @@ const GamesList = () => {
       <div className="intro-row">
         <p>Quick access to essential features and tools</p>
 
-        <div className="action-row">
+        <div className="actions-row">
           <div className="search-field">
             <SearchIcon className="search-icon" />
             <input
@@ -101,7 +101,7 @@ const GamesList = () => {
             />
           </div>
 
-          <div className="flex p-2 gap-4 w-full sm:w-auto">
+          <div className="flex gap-2 w-full sm:w-auto">
             <Select value={genre} onValueChange={(value) => setGenre(value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Filter by genre" />
