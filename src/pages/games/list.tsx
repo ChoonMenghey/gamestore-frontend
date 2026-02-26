@@ -42,9 +42,12 @@ const GamesList = () => {
       accessorKey: 'price',
       size: 50,
       header: () => <p className="column-title ml-2">Price</p>,
-      cell: ({ getValue }) => <span className="text-foreground">{getValue<string>()}</span>,
+      cell: ({ getValue }) => {
+        const price = getValue<number>();
+        return <span className="text-foreground">${price.toFixed(2)}</span>;
+      },
     },
-        {
+    {
       id: 'genre',
       accessorKey: 'genre.name',
       size: 100,
