@@ -13,7 +13,7 @@ import { useMemo, useState } from "react";
 import { CreateButton } from "@/components/refine-ui/buttons/create";
 import { DataTable } from "@/components/refine-ui/data-table/data-table";
 
-import { Game } from "@/types";
+import { GameDetails } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { useTable } from "@refinedev/react-table";
 
@@ -28,7 +28,7 @@ const GamesList = () => {
     { field: 'name', operator: 'contains' as const, value: searchQuery }
   ] : [];
 
-  const gameColumns = useMemo<ColumnDef<Game>[]>(() => [
+  const gameColumns = useMemo<ColumnDef<GameDetails>[]>(() => [
     {
       id: 'title',
       accessorKey: 'title',
@@ -60,7 +60,7 @@ const GamesList = () => {
     },
   ], []);
 
-  const genreTable = useTable<Game>({
+  const genreTable = useTable<GameDetails>({
     columns: gameColumns,
     refineCoreProps: {
       resource: 'games',

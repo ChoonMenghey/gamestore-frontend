@@ -1,12 +1,3 @@
-export type Game = {
-    id: number;
-    name:string;
-    price: number,
-    description: string;
-    genre: string;
-    createdAt?: string;
-}
-
 export type ListResponse<T = unknown> = {
     data?: T[];
     pagination: {
@@ -80,7 +71,7 @@ export type GameDetails = {
     description: string;
     price: number;
     genre: Genre;
-
+    createdAt?: string;
 }
 export type SignUpPayload = {
   email: string;

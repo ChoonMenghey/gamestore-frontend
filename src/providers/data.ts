@@ -2,6 +2,10 @@ import { BACKEND_BASE_URL } from "@/constants";
 import { ListResponse } from "@/types";
 import { createDataProvider, CreateDataProviderOptions } from "@refinedev/rest";
 
+if (!BACKEND_BASE_URL) {
+  throw new Error("BACKEND_BASE_URL is not defined in environment variables");
+}
+
 const options: CreateDataProviderOptions = {
   getList: {
 
@@ -11,7 +15,7 @@ const options: CreateDataProviderOptions = {
       const page = pagination?.currentPage ?? 1;
       const pageSize = pagination?.pageSize ?? 10;
 
-      const params: Record<string, string|number> = { page, limit: pageSize };
+      const params: Record<string, string | number> = { page, limit: pageSize };
 
       filters?.forEach((filter) => {
         const field = 'field' in filter ? filter.field : '';
@@ -22,23 +26,23 @@ const options: CreateDataProviderOptions = {
           if (field === 'genre') params.genre = value;
           if (field === 'name') params.search = value;
         }
-    })
+      })
 
-    return params;
+      return params;
+    },
+
+    mapResponse: async (response) => {
+      const payload: ListResponse = await response.clone().json();
+
+      return payload.data ?? [];
+    },
+
+    getTotalCount: async (response) => {
+      const payload: ListResponse = await response.clone().json();
+
+      return payload.pagination?.total ?? payload.data?.length ?? 0;
+    }
   },
-
-  mapResponse: async (response) => {
-    const payload: ListResponse = await response.json();
-
-    return payload.data ?? [];
-  },
-
-  getTotalCount: async (response) => {
-    const payload: ListResponse = await response.json();
-
-    return payload.pagination?.total ?? payload.data?.length ?? 0;
-  }
-},
 };
 
 const { dataProvider } = createDataProvider(BACKEND_BASE_URL, options);
