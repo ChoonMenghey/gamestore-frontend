@@ -22,8 +22,8 @@ const UploadWidget = ({ value = null, onChange, disabled = false }) => {
 
     useEffect(() => {
         if (typeof window === "undefined") return;
- 
-        const initialzeWidget = () => {
+
+        const initializeWidget = () => {
             if (!window.cloudinary || widgetRef.current) return false;
 
             widgetRef.current = window.cloudinary.createUploadWidget({
@@ -32,8 +32,13 @@ const UploadWidget = ({ value = null, onChange, disabled = false }) => {
                 multiple: false,
                 folder: 'uploads',
                 maxFileSize: 5000000,
-                clientAllowedFormats: ['png', 'jpd', 'jpeg', 'webp'],
+                clientAllowedFormats: ['png', 'jpg', 'jpeg', 'webp'],
             }, (error, result) => {
+                if (error) {
+                    console.error("Upload failed:", error);
+                    // Consider adding error state and displaying to user
+                    return;
+                }
                 if (!error && result.event === 'success') {
                     const payload: UploadWidgetValue = {
                         url: result.info.secure_url,
@@ -50,13 +55,19 @@ const UploadWidget = ({ value = null, onChange, disabled = false }) => {
             return true;
         }
 
-        if(initialzeWidget()) return;
+        if (initializeWidget()) return;
+        let attempts = 0;
+        const maxAttempts = 20; // 10 seconds max
 
         const intervalId = window.setInterval(() => {
-            if(initialzeWidget()){
-                window.clearInterval(intervalId);
-            }
-        }, 500);
+                attempts++;
+                if (initializeWidget()) {
+                    window.clearInterval(intervalId);
+                } else if (attempts >= maxAttempts) {
+                    window.clearInterval(intervalId);
+                    console.warn("Cloudinary widget failed to load");
+                }
+            }, 500);
 
         return () => window.clearInterval(intervalId)
     }, [])

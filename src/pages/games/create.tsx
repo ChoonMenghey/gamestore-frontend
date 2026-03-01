@@ -16,12 +16,12 @@ import { Separator } from "@/components/ui/separator";
 import { useBack } from "@refinedev/core"
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { Controller } from "react-hook-form";
+import { useForm } from "@refinedev/react-hook-form";
 import { gameSchema } from "@/lib/schema";
-import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import UploadWidget from "@/components/upload-widget";
-import { fi } from "zod/v4/locales";
+
 
 const GamesCreate = () => {
   const back = useBack();
@@ -79,7 +79,7 @@ const GamesCreate = () => {
 
   const bannerPublicId = form.watch("bannerCldPubId");
 
-  const setBannerImage = (file, field) => {
+  const setBannerImage = (file: any, field: any) => {
     if (file) {
       field.onChange(file.url);
       form.setValue('bannerCldPubId', file.publicId, {
@@ -87,14 +87,11 @@ const GamesCreate = () => {
         shouldDirty: true,
       })
     } else {
-      field.onChange("bannerCldPubId", '', {
-        shouldValidate: true,
-        shouldDirty: true,
-      });
-      form.setValue("bannerCldPubId", file.publicId, {
-        shouldValidate: true,
-        shouldDirty: true, 
-      })
+        field.onChange('');
+        form.setValue("bannerCldPubId", '', {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
     }
   }
   return (
@@ -132,7 +129,7 @@ const GamesCreate = () => {
                       <FormControl>
                         <UploadWidget
                           value={field.value ? { url: field.value, publicId: bannerPublicId ?? "" } : null}
-                          onChange={(file: any, field: any) => setBannerImage(file, field)}
+                          onChange={(file: any) => setBannerImage(file, field)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -143,7 +140,7 @@ const GamesCreate = () => {
                       )}
                     </FormItem>
                   )}
-                  />
+                />
                 <FormField
                   control={control}
                   name="title"
