@@ -13,9 +13,19 @@ import { useMemo, useState } from "react";
 import { CreateButton } from "@/components/refine-ui/buttons/create";
 import { DataTable } from "@/components/refine-ui/data-table/data-table";
 
-import { GameDetails } from "@/types";
+import { GameDetails, Genre } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { useTable } from "@refinedev/react-table";
+import { Badge } from "@/components/ui/badge";
+
+type GameListItems = {
+  id: number;
+  title: string;
+  status: "Available" | "Pending" | "Not Available";
+  price: number;
+  genre: Genre;
+  description: string;
+}
 
 const GamesList = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -28,7 +38,7 @@ const GamesList = () => {
     { field: 'name', operator: 'contains' as const, value: searchQuery }
   ] : [];
 
-  const gameColumns = useMemo<ColumnDef<GameDetails>[]>(() => [
+  const gameColumns = useMemo<ColumnDef<GameListItems>[]>(() => [
     {
       id: 'title',
       accessorKey: 'title',
@@ -36,6 +46,18 @@ const GamesList = () => {
       header: () => <p className="column-title ml-2">Title</p>,
       cell: ({ getValue }) => <span className="text-foreground">{getValue<string>()}</span>,
       filterFn: 'includesString',
+    },
+    {
+      id: "status",
+      accessorKey: "status",
+      size: 140,
+      header: () => <p className="column-title">Status</p>,
+      cell: ({ getValue }) => {
+        const status = getValue<"Available" | "Pending" | "Not Available">();
+        const variant = status === "Available" ? "default" : "secondary";
+
+        return <Badge variant={variant}>{status}</Badge>;
+      },
     },
     {
       id: 'price',
@@ -63,7 +85,7 @@ const GamesList = () => {
     },
   ], []);
 
-  const genreTable = useTable<GameDetails>({
+  const genreTable = useTable<GameListItems>({
     columns: gameColumns,
     refineCoreProps: {
       resource: 'games',
