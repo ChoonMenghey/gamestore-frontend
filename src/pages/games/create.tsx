@@ -60,23 +60,6 @@ const GamesCreate = () => {
     }
   }
 
-  const { query: gamesQuery } = useList<GameDetails>({
-    resource: 'games',
-    pagination: {
-      pageSize: 100
-    }
-  })
-
-  const { query: developersQuery } = useList<User>({
-    resource: 'users',
-    filters: [
-      { field: 'role', operator: 'eq', value: 'developer' },
-    ],
-    pagination: {
-      pageSize: 100
-    }
-  })
-
   const bannerPublicId = form.watch("bannerCldPubId");
 
   const setBannerImage = (file: any, field: any) => {

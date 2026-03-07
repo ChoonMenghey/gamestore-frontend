@@ -6,9 +6,14 @@ export const authClient = createAuthClient({
   user: {
     additionalFields: {
       role: {
-        type: USER_ROLES,
+        type: "string",
         required: true,
-        defaultValue: "developer",
+        defaultValue: USER_ROLES.DEVELOPER,
+        input: true,
+      },
+            image: {
+        type: "string",
+        required: false,
         input: true,
       },
       imageCldPubId: {

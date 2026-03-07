@@ -12,7 +12,7 @@ const options: CreateDataProviderOptions = {
     getEndpoint: ({ resource }) => resource, // "posts" → "/posts"
 
     buildQueryParams: async ({ resource, pagination, filters }) => {
-      const params: Record<string, string | number> = { page, limit: pageSize };
+      const params: Record<string, string | number> = {};
 
       if (pagination?.mode !== "off") {
         const page = pagination?.currentPage ?? 1;

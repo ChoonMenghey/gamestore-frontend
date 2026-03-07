@@ -36,7 +36,7 @@ const GamesList = () => {
     { field: 'genre', operator: 'eq' as const, value: selectedGenre }
   ]
   const searchFilters = searchQuery ? [
-    { field: 'title', operator: 'contains' as const, value: searchQuery }
+    { field: 'name', operator: 'contains' as const, value: searchQuery }
   ] : [];
 
   const gameColumns = useMemo<ColumnDef<GameListItems>[]>(() => [

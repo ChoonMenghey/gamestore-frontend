@@ -32,9 +32,6 @@ export const authProvider: AuthProvider = {
                 };
             }
 
-            // Store user data
-            localStorage.setItem("user", JSON.stringify(data.user));
-
             return {
                 success: true,
                 redirectTo: "/",

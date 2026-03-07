@@ -73,7 +73,7 @@ export const SignInForm = () => {
 
         <Separator />
 
-        <CardContent className={cn("px-0")}>
+        <CardContent className="content">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSignIn)} className="form">
               <FormField
