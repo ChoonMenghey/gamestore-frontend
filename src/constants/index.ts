@@ -2,14 +2,14 @@ import { Baby, Bot } from "lucide-react";
 
 
 export const USER_ROLES = {
-    CUSTOMER: "customer",
+    DEVELOPER: "developer",
     ADMIN: "admin",
 };
 
 export const ROLE_OPTIONS = [
     {
-        value: USER_ROLES.CUSTOMER,
-        label: "Customer",
+        value: USER_ROLES.DEVELOPER,
+        label: "Developer",
         icon: Baby,
     },
     {
@@ -20,26 +20,81 @@ export const ROLE_OPTIONS = [
 ]
 
 export const GENRES = [
-    "Action-Based",
-    "Adventure-Based",
-    "Role-Playing",
-    "Simulation",
-    "Strategy",
-    "Sports",
-    "Puzzle",
-    "Shooter",
-    "Platformer",
-    "Indie",
-    "MMORPG",
-    "Sandbox",
-    "Horror",
-    "Comedy",
-    "Drama",
+    {
+        id: 1,
+        name: "Action-Based",
+    },
+    {
+        id: 2,
+        name: "Adventure-Based",
+    },
+    {
+        id: 3,
+        name: "Role-Playing",
+    },
+    {
+        id: 4,
+        name: "Simulation",
+    },
+    {
+        id: 5,
+        name: "Strategy",
+    },
+    {
+        id: 6,
+        name: "Sports",
+    },
+    {
+        id: 7,
+        name: "Puzzle",
+    },
+    {
+        id: 8,
+        name: "Shooter",
+    },
+    {
+        id: 9,
+        name: "Platformer",
+    },
+    {
+        id: 10,
+        name: "Indie",
+    },
+    {
+        id: 11,
+        name: "MMORPG",
+    },
+    {
+        id: 12,
+        name: "Sandbox",
+    },
+    {
+        id: 13,
+        name: "Horror",
+    },
+    {
+        id: 14,
+        name: "Comedy",
+    },
+    {
+        id: 15,
+        name: "Drama",
+    },
 ] as const;
 
 export const GENRES_OPTIONS = GENRES.map((genre) => ({
-    value: genre,
-    label: genre,
+    value: genre.id,
+    label: genre.name,
+}));
+
+export const STATUS = [
+    "Available",
+    "Pending",
+    "Not Available",
+] as const;
+
+export const STATUS_OPTIONS = STATUS.map((status) => ({
+    value: status,
 }));
 
 export const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3MB in bytes

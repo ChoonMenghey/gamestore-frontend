@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -13,18 +12,22 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { useBack } from "@refinedev/core"
+import { useBack, useList } from "@refinedev/core"
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller } from "react-hook-form";
 import { useForm } from "@refinedev/react-hook-form";
 import { gameSchema } from "@/lib/schema";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import UploadWidget from "@/components/upload-widget";
-
+import { GameDetails, User } from "@/types";
+import { GENRES_OPTIONS, STATUS_OPTIONS } from "@/constants";
+import { useGetIdentity } from "@refinedev/core";
 
 const GamesCreate = () => {
+  const { data: currentUser } = useGetIdentity<User>();
+
   const back = useBack();
+  
   const form = useForm({
     resolver: zodResolver(gameSchema),
     refineCoreProps: {
@@ -34,48 +37,28 @@ const GamesCreate = () => {
   });
 
   const {
+    refineCore: { onFinish },
     handleSubmit,
     formState: { isSubmitting, errors },
     control,
   } = form;
 
-  const onSubmit = (values: z.infer<typeof gameSchema>) => {
+  const onSubmit = async (values: z.infer<typeof gameSchema>) => {
+    if (!currentUser?.id) return;
+
     try {
-      console.log("Creating game with values:", values);
+      // inject the current user id if available; the server will also
+      // derive developerId from the authenticated session so this is
+      // mostly for schema compatibility and any client-side previews.
+      await onFinish({
+        ...values,
+        developerId: currentUser?.id,
+      });
     } catch (error) {
       console.log("Error creating game", error);
+      // you could show a notification here if desired
     }
   }
-  const genres = [
-    {
-      id: 1,
-      name: "Action-Based",
-    },
-    {
-      id: 2,
-      name: "Adventure-Based",
-    },
-    {
-      id: 3,
-      name: "Role-Playing",
-    },
-    {
-      id: 4,
-      name: "Simulation",
-    },
-    {
-      id: 5,
-      name: "Strategy",
-    },
-    {
-      id: 6,
-      name: "Sports",
-    },
-    {
-      id: 7,
-      name: "Puzzle",
-    },
-  ]
 
   const bannerPublicId = form.watch("bannerCldPubId");
 
@@ -87,11 +70,11 @@ const GamesCreate = () => {
         shouldDirty: true,
       })
     } else {
-        field.onChange('');
-        form.setValue("bannerCldPubId", '', {
-          shouldValidate: true,
-          shouldDirty: true,
-        });
+      field.onChange('');
+      form.setValue("bannerCldPubId", '', {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
     }
   }
   return (
@@ -172,26 +155,13 @@ const GamesCreate = () => {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {genres.map((genre) => (
-                                <SelectItem key={genre.id} value={genre.id.toString()}>
-                                  {genre.id}. ({genre.name})
+                              {GENRES_OPTIONS.map((genre) => (
+                                <SelectItem key={genre.value} value={genre.value.toString()}>
+                                  {genre.value}. {genre.label}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={control}
-                    name="developerId"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Developer Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter Developer Name" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -204,7 +174,7 @@ const GamesCreate = () => {
                       <FormItem>
                         <FormLabel>Price</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter the price" {...field} />
+                          <Input type="number" placeholder="Enter the price" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -212,19 +182,56 @@ const GamesCreate = () => {
                   />
                   <FormField
                     control={control}
-                    name="description"
+                    name="status"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description</FormLabel>
+                        <FormLabel>Status</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter game description" {...field} />
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {STATUS_OPTIONS.map(status => (
+                                <SelectItem key={status.value} value={status.value}>
+                                  {status.value}
+                                </SelectItem>
+
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
+                  <FormItem>
+                    <FormLabel>Developer Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        value={currentUser?.name ?? "Not signed in"}
+                        readOnly
+                      />
+                    </FormControl>
+                  </FormItem>
                 </div>
-
+                <FormField
+                  control={control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter game description" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Separator />
                 <Button type="submit">Submit</Button>
               </form>
             </Form>
