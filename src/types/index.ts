@@ -1,19 +1,28 @@
+export type Game = {
+  id: number;
+  title: string;
+  description: string;
+  genre: string;
+  price: number;
+  createdAt?: string;
+}
+
 export type ListResponse<T = unknown> = {
-    data?: T[];
-    pagination: {
-        page: number;
-        limit: number;
-        total: number;
-        totalPages: number;
-    }
+  data?: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  }
 }
 
 export type CreateResponse<T = unknown> = {
-    data?: T;
+  data?: T;
 }
 
 export type GetOneResponse<T = unknown> = {
-    data?: T;
+  data?: T;
 }
 
 declare global {
@@ -56,9 +65,21 @@ export interface UploadWidgetProps {
   disabled?: boolean;
 }
 export enum UserRole {
-  CUSTOMER = "customer",
+  DEVELOPER = "developer",
   ADMIN = "admin",
 }
+
+export type User = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  email: string;
+  name: string;
+  role: UserRole;
+  image?: string;
+  imageCldPubId?: string;
+  genre?: string;
+};
 
 export type Genre = {
   id: number;
@@ -66,12 +87,16 @@ export type Genre = {
 };
 
 export type GameDetails = {
-    id: number;
-    title: string;
-    description: string;
-    price: number;
-    genre: Genre;
-    createdAt?: string;
+  id: number;
+  title: string;
+  description: string;
+  developerId: string;
+  price: number;
+  bannerUrl?: string;
+  bannerCldPubId?: string;
+  genre: Genre;
+  status: 'Available' | 'Pending' | 'Not Available'
+  createdAt?: string;
 }
 export type SignUpPayload = {
   email: string;

@@ -1,9 +1,10 @@
-import { GitHubBanner, Refine } from "@refinedev/core";
+import { Authenticated, GitHubBanner, Refine } from "@refinedev/core";
 import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 
 import routerProvider, {
   DocumentTitleHandler,
+  NavigateToResource,
   UnsavedChangesNotifier,
 } from "@refinedev/react-router";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router";
@@ -17,6 +18,9 @@ import { Gamepad2, Home } from "lucide-react";
 import { Layout } from "./components/refine-ui/layout/layout";
 import GamesList from "./pages/games/list";
 import GamesCreate from "./pages/games/create";
+import { Login } from "./pages/login";
+import { Register } from "./pages/register";
+import { authProvider } from "./providers/auth";
 
 function App() {
   return (
@@ -27,6 +31,7 @@ function App() {
           <DevtoolsProvider>
             <Refine
               dataProvider={dataProvider}
+              authProvider={authProvider}
               notificationProvider={useNotificationProvider()}
               routerProvider={routerProvider}
               options={{
@@ -51,12 +56,25 @@ function App() {
               <Routes>
                 <Route
                   element={
-                    <Layout>
-                      <Outlet />
-                    </Layout>
+                    <Authenticated key="public-routes" fallback={<Outlet />}>
+                      <NavigateToResource fallbackTo="/" />
+                    </Authenticated>
+                  }
+                >
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                </Route>
+                <Route
+                  element={
+                    <Authenticated key="private-routes" fallback={<Login />}>
+                      <Layout>
+                        <Outlet />
+                      </Layout>
+                    </Authenticated>
                   }
                 >
                   <Route path="/" element={<Dashboard />} />
+
                   <Route path="games">
                     <Route index element={<GamesList />} />
                     <Route path="create" element={<GamesCreate />} />

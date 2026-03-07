@@ -13,7 +13,7 @@ import { useMemo, useState } from "react";
 import { CreateButton } from "@/components/refine-ui/buttons/create";
 import { DataTable } from "@/components/refine-ui/data-table/data-table";
 
-import { GameDetails, Genre } from "@/types";
+import { Genre } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { useTable } from "@refinedev/react-table";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +22,7 @@ type GameListItems = {
   id: number;
   title: string;
   status: "Available" | "Pending" | "Not Available";
+  bannerUrl?: string;
   price: number;
   genre: Genre;
   description: string;
@@ -29,16 +30,36 @@ type GameListItems = {
 
 const GamesList = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [genre, setGenre] = useState("all");
+  const [selectedGenre, setSelectedGenre] = useState<string>("all");
 
-  const genreFilters = genre === 'all' ? [] : [
-    { field: 'genre', operator: 'eq' as const, value: genre }
+  const genreFilters = selectedGenre === 'all' ? [] : [
+    { field: 'genre', operator: 'eq' as const, value: selectedGenre }
   ]
   const searchFilters = searchQuery ? [
-    { field: 'name', operator: 'contains' as const, value: searchQuery }
+    { field: 'title', operator: 'contains' as const, value: searchQuery }
   ] : [];
 
   const gameColumns = useMemo<ColumnDef<GameListItems>[]>(() => [
+    {
+      id: "banner",
+      accessorKey: "bannerUrl",
+      size: 120,
+      header: () => <p className="column-title ml-2">Banner</p>,
+      cell: ({ getValue }) => {
+        const bannerUrl = getValue<string>();
+
+        return bannerUrl ? (
+          <img
+            src={bannerUrl}
+            alt="Class banner"
+            className="ml-2 h-10 w-10 rounded-md object-cover"
+            loading="lazy"
+          />
+        ) : (
+          <span className="text-muted-foreground ml-2">No image</span>
+        );
+      },
+    },
     {
       id: 'title',
       accessorKey: 'title',
@@ -85,17 +106,23 @@ const GamesList = () => {
     },
   ], []);
 
-  const genreTable = useTable<GameListItems>({
+  const gamesTable = useTable<GameListItems>({
     columns: gameColumns,
     refineCoreProps: {
       resource: 'games',
-      pagination: { pageSize: 10, mode: 'server' },
+      pagination: { 
+        pageSize: 10, 
+        mode: 'server' 
+      },
       filters: {
         permanent: [...genreFilters, ...searchFilters],
       },
       sorters: {
         initial: [
-          { field: 'title', order: 'desc' }
+          { 
+            field: 'id', 
+            order: 'desc' 
+          }
         ]
       },
     }
@@ -123,14 +150,14 @@ const GamesList = () => {
           </div>
 
           <div className="flex gap-2 w-full sm:w-auto">
-            <Select value={genre} onValueChange={(value) => setGenre(value)}>
+            <Select value={selectedGenre} onValueChange={(value) => setSelectedGenre(value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Filter by genre" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Genres</SelectItem>
                 {GENRES_OPTIONS.map((genre) => (
-                  <SelectItem key={genre.value} value={genre.value}>
+                  <SelectItem key={genre.value} value={genre.label}>
                     {genre.label}
                   </SelectItem>
                 ))}
@@ -142,7 +169,7 @@ const GamesList = () => {
         </div>
       </div>
 
-      <DataTable table={genreTable} />
+      <DataTable table={gamesTable} />
     </ListView>
   );
 };
